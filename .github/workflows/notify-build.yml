@@ -1,0 +1,44 @@
+name: Notify BAOS Build
+
+# Fires when changes are pushed to this component repo's main branch.
+# Dispatches a build event to marimotica/baos-build so the full BAOS
+# image is rebuilt with the new component code.
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+  workflow_dispatch:
+
+jobs:
+  dispatch-build:
+    name: Dispatch BAOS build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send repository_dispatch to baos-build
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BAOS_BUILD_TOKEN }}
+          script: |
+            const component = "${{ github.event.repository.name }}";
+            const sha       = "${{ github.sha }}";
+            const ref       = "${{ github.ref_name }}";
+
+            await github.rest.repos.createDispatchEvent({
+              owner: "marimotica",
+              repo:  "baos-build",
+              event_type: "baos-component-update",
+              client_payload: {
+                component,
+                sha,
+                ref,
+                triggered_by: `${component}@${sha.substring(0, 7)}`
+              }
+            });
+
+            console.log(`Dispatched baos-component-update for ${component} (${sha.substring(0, 7)})`);
