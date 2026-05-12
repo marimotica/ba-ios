@@ -208,7 +208,7 @@ jobs:
     needs: check-swiftlint-disables
     if: |
       github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == 'home-assistant/iOS'
+      github.event.pull_request.head.repo.full_name == 'marimotica/ba-ios'
     runs-on: macos-26
     timeout-minutes: 45
     steps:

@@ -39,14 +39,14 @@ jobs:
       - name: Commit changes
         id: commit
         run: |
-          git config --global user.name 'Home Assistant Bot'
-          git config --global user.email 'hello@home-assistant.io'
+          git config --global user.name 'Boat Assistant Bot'
+          git config --global user.email 'bot@boat-assistant.io'
           git add Sources/\*.strings
           git add Sources/\*.swift
           git commit -m "Update Localized Strings" || true
           git checkout -- .
           git clean -xfd
-          echo ::set-output name=pr_title::"$(git log -1 --pretty='%s')"
+          echo "pr_title=$(git log -1 --pretty='%s')" >> $GITHUB_OUTPUT
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
         with:
